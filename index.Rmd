@@ -8,7 +8,6 @@ output:
 ---
 
 
-
 ## Project Proposal 
 Is the inclusion of 'Diversity, Equity and Inclusion' within K-12 School District mission statements affected by party, race and income? In this study, I plan to examine the extent to which socioeconomic and partisan factors of a given school district in the US, influences whether or not values of diversity, equity and inclusion are included in their mission statements. 
 
