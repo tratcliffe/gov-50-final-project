@@ -22,7 +22,6 @@ If I observe less inclusion of diversity, inclusion and equity values in Mission
 ```{r}
 library(tidyverse)
 diversity_data <- read.csv("data/district_tabular_data.csv")
-diversity_data
 ```
 
 ##tibble only showing diversity topic, party, race, class
@@ -30,7 +29,6 @@ diversity_data
 ```{r}
 diversity_data <- diversity_data |>
   select(topic_diversity_equity_and_inclusion, majority_vote, white_share_category, hh_median_income_category)
-diversity_data
 ```
 ##first visualisation 
 ##i want to count up how many times '1' was answered for 'topic_diversity_equity_and_inclusion
