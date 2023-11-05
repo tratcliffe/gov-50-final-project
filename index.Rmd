@@ -16,5 +16,33 @@ As seen through the Affirmative Action case this year, conservative ideology ten
 
 My representative sample is comprised of 1314 mission statements from regular public school districts, whose mission statements were published online as of November 2022. The schools were chosen from a comprehensive list maintained by the National Center for Education Statistics. My unit of analysis is a Mission Statement. The explanatory variable of interest is whether values of diversity, equity or inclusion are included. The variable is coded = 1 for included, and = 0 for excluded. There are several key words that will indicate these values (closing gap, culture, diversity, equity, inclusion, nationality, race). My outcome variables are the party of the district - Republican or Democrat. This is reflected through whether the majority of residents voted for Donald Trump or Joe Biden in the 2020 presidential election, and is calculated using 2020 General Election Results Disaggregated to 2020 Census Blocks Datasets available through the Redistricting Data Hub. Population data includes median income and share of white residents, and was accessed from the 2015-2019 American Community Survey estimates published by the Census Bureau. 
 
-If I observe more inclusion of diversity, inclusion and equity values in Mission Statements within Republican, upper-class and predominately white districts, this would provide support for my hypothesis. On the other hand, if I observe more inclusion of diversity, inclusion and equity values in Mission Statements within Democratic, lower-class and predominately non-white school districts, this would provide evidence against my hypothesis. 
+If I observe less inclusion of diversity, inclusion and equity values in Mission Statements within Republican, upper-class and predominately white districts, this would provide support for my hypothesis. On the other hand, if I observe less inclusion of diversity, inclusion and equity values in Mission Statements within Democratic, lower-class and predominately non-white school districts, this would provide evidence against my hypothesis. 
+
+##loading the data
+```{r}
+library(tidyverse)
+diversity_data <- read.csv("data/district_tabular_data.csv")
+diversity_data
+```
+
+##tibble only showing diversity topic, party, race, class
+
+```{r}
+diversity_data <- diversity_data |>
+  select(topic_diversity_equity_and_inclusion, majority_vote, white_share_category, hh_median_income_category)
+diversity_data
+```
+##first visualisation 
+##i want to count up how many times '1' was answered for 'topic_diversity_equity_and_inclusion
+```{r}
+div_count <- diversity_data |>
+  group_by(majority_vote) |>
+  filter(!is.na(majority_vote), topic_diversity_equity_and_inclusion == 1) |>
+  count()
+div_count |>
+ggplot(mapping = aes(x = majority_vote, y = n)) +
+  geom_bar(stat = "identity", fill = "lightblue1") +
+  labs(title = "Diversity, Equity and Inclusion Topic by Party", x = "Party Affiliation", y = "Number of Times 'Diversity, Equity or Inclusion' Mentioned")
+```
+
 
