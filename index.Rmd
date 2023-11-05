@@ -19,20 +19,20 @@ My representative sample is comprised of 1314 mission statements from regular pu
 If I observe less inclusion of diversity, inclusion and equity values in Mission Statements within Republican, upper-class and predominately white districts, this would provide support for my hypothesis. On the other hand, if I observe less inclusion of diversity, inclusion and equity values in Mission Statements within Democratic, lower-class and predominately non-white school districts, this would provide evidence against my hypothesis. 
 
 ##loading the data
-```{r}
+```{r, echo=FALSE}
 library(tidyverse)
 diversity_data <- read.csv("data/district_tabular_data.csv")
 ```
 
 ##tibble only showing diversity topic, party, race, class
 
-```{r}
+```{r, echo=FALSE}
 diversity_data <- diversity_data |>
   select(topic_diversity_equity_and_inclusion, majority_vote, white_share_category, hh_median_income_category)
 ```
 ##first visualisation 
 ##i want to count up how many times '1' was answered for 'topic_diversity_equity_and_inclusion
-```{r}
+```{r, echo=FALSE}
 div_count <- diversity_data |>
   group_by(majority_vote) |>
   filter(!is.na(majority_vote), topic_diversity_equity_and_inclusion == 1) |>
