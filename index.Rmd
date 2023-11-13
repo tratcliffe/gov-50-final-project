@@ -26,8 +26,7 @@ diversity_data <- read.csv("data/district_tabular_data.csv")
 
 ```{r, echo=FALSE}
 diversity_data <- diversity_data |>
-  select(topic_diversity_equity_and_inclusion, majority_vote, white_share_category, hh_median_income_category) |>
-  
+  select(topic_diversity_equity_and_inclusion, majority_vote, white_share_category, hh_median_income_category)
 ```
 
 ```{r, echo=FALSE}
