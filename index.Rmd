@@ -26,7 +26,8 @@ diversity_data <- read.csv("data/district_tabular_data.csv")
 
 ```{r, echo=FALSE}
 diversity_data <- diversity_data |>
-  select(topic_diversity_equity_and_inclusion, majority_vote, white_share_category, hh_median_income_category)
+  select(topic_diversity_equity_and_inclusion, majority_vote, white_share_category, hh_median_income_category) |>
+  
 ```
 
 ```{r, echo=FALSE}
@@ -40,4 +41,5 @@ ggplot(mapping = aes(x = majority_vote, y = n)) +
   labs(title = "Diversity, Equity and Inclusion Topic by Party", x = "Party Affiliation", y = "Number of Times 'Diversity, Equity or Inclusion' Mentioned")
 ```
 
+This graph shows a comparison of democratic and republican inclusions of diversity, equity or inclusion topics within their mission statements. It is the beginning of an exploration between party affiliation and an educational focus on these topics, and suggests that being democratic increases a school district's tendency to include them. 
 
