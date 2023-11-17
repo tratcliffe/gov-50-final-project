@@ -42,3 +42,26 @@ ggplot(mapping = aes(x = majority_vote, y = n)) +
 
 This graph shows a comparison of democratic and republican inclusions of diversity, equity or inclusion topics within their mission statements. It is the beginning of an exploration between party affiliation and an educational focus on these topics, and suggests that being democratic increases a school district's tendency to include them. 
 
+```{r, echo=FALSE}
+income_table <- diversity_data |>
+  mutate(Income = case_when(
+  hh_median_income_category %in% c("low_median_income") ~ "Low Median Income",
+  hh_median_income_category %in% c("medium_median_income") ~ "Medium Median Income",
+  hh_median_income_category %in% c("high_median_income") ~ "High Median Income"),
+    Party = case_when(
+      majority_vote == "republican" ~ "Republican",
+      majority_vote == "democratic" ~ "Democratic",
+      NA ~ "Other"
+    )) |>
+  group_by(Party, Income) |>
+  summarize(n = n()) |>
+  mutate(prop = n / sum(n)) |>
+  select(-n) |>
+  pivot_wider(
+    names_from = Party,
+    values_from = prop
+  ) |>
+select(Income, Democratic, Republican)
+knitr::kable(income_table)
+```
+This cross-tab proportion table examines how income levels differ by party, in an attempt to see if there is a connection between the two. It does so by showing the proportion of each party within each income group. The table shows that both the high and low median income individuals have a relatively balanced distribution between Democrats and Republicans. Interestingly, the proportion of democrats is higher than republicans in both the high and low income groups. However, the medium median income group shows a larger disparity, with most being Republican. Knowing this, I plan to examine if both income and party influence whether or not diversity is talked about in their statements. 
