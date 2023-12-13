@@ -144,6 +144,39 @@ ggplot(filtered_data, aes(x = Income, y = prop, fill = Party)) +
   theme_minimal() +
   theme(strip.text = element_text(size = 8))
 ```
- 
- 
- when you are rich but black, mostly democratic. when rich but white, mostly republican. when you are poor but black, mostly democratic. when you are poor but white, mostly republican. when you are medium income but black, mostly democratic. when medium income but white, mostly republican. 
+This graph groups all 3 variables: race, party and income group, to assess if there are any consistent demographic links. The results indicate the following: High income, predominately non-white districts are mostly democratic. High income, predominately white districts are mostly republican. Low income, predominately non-white districts are mostly democratic. Low income, predominately white districts are mostly republican. Medium income, predominately non-white districts are mostly democratic. Medium income, predominately white districts are mostly republican. This indicates that across income groups, race is the predominate factor in predicting party affiliation. However, the medium income group does produce a much higher proportion of republicans. 
+
+Now, I want to connect these unique groups with whether or not they included the topics of diversity, equity or inclusion in their mission statements. In particular, my hypothesis suggested that high income, Republican districts, with predominately white populations, would be the least likely to include Diversity, Equity and Inclusion within their mission statement. 
+
+
+```{r}
+count_by_group <- diversity_data |>
+  na.omit() |>
+  group_by(hh_median_income_category, white_share_category, majority_vote) |>
+  summarize(count = sum(topic_diversity_equity_and_inclusion == 1)) |>
+  mutate(
+    hh_median_income_category = case_when(
+      hh_median_income_category == "low_median_income" ~ "Low Income",
+      hh_median_income_category == "medium_median_income" ~ "Medium Income",
+      hh_median_income_category == "high_median_income" ~ "High Income",
+      TRUE ~ hh_median_income_category
+    ),
+    white_share_category = case_when(
+      white_share_category == "low_share" ~ "Mostly White",
+      white_share_category == "high_share" ~ "Mostly Non-White",
+      TRUE ~ white_share_category
+    ),
+    majority_vote = case_when(
+      majority_vote == "republican" ~ "Republican",
+      majority_vote == "democratic" ~ "Democratic",
+      TRUE ~ majority_vote
+    )
+  ) |>
+  arrange(desc(count))
+
+knitr::kable(count_by_group, col.names = c("Income Group", "Predominate Race", "Party", "Count"),
+             caption = "**Summary of DEI Topics Mentions by Income Group, Predominate Race, and Party**")
+```
+These findings organize the unique socioeconomic/partisan groups from most inclusions of DEI topics, to least. It reveals that the group with the most DEI topic mentions was mostly white, democratic, medium income districts, closely followed by mostly white, high income, democratic districts. The least likely to include DEI topics in their mission statements were low income and medium income, mostly non-white, democratic districts. Interestingly, all republican districts fell in the middle of the distribution, regardless of race breakdown. 
+
+
