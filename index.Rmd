@@ -27,6 +27,7 @@ diversity_data <- read.csv("data/district_tabular_data.csv")
 ```{r, echo=FALSE}
 diversity_data <- diversity_data |>
   select(topic_diversity_equity_and_inclusion, majority_vote, white_share_category, hh_median_income_category)
+diversity_data
 ```
 
 ```{r, echo=FALSE}
@@ -34,10 +35,16 @@ div_count <- diversity_data |>
   group_by(majority_vote) |>
   filter(!is.na(majority_vote), topic_diversity_equity_and_inclusion == 1) |>
   count()
-div_count |>
-ggplot(mapping = aes(x = majority_vote, y = n)) +
-  geom_bar(stat = "identity", fill = "lightblue1") +
-  labs(title = "Diversity, Equity and Inclusion Topic by Party", x = "Party Affiliation", y = "Number of Times 'Diversity, Equity or Inclusion' Mentioned")
+
+ggplot(div_count, aes(x = majority_vote, y = n)) +
+  geom_bar(stat = "identity", fill = c("democratic" = "blue", "republican" = "red")) +
+  labs(
+    title = "Diversity, Equity and Inclusion Topic by Party",
+    x = "Party Affiliation",
+    y = "Number of Mentions"
+  ) +
+  scale_x_discrete(labels = c("democratic" = "Democratic", "republican" = "Republican")) +
+  theme_minimal()
 ```
 
 This graph shows a comparison of democratic and republican inclusions of diversity, equity or inclusion topics within their mission statements. It is the beginning of an exploration between party affiliation and an educational focus on these topics, and suggests that being democratic increases a school district's tendency to include them. 
@@ -64,4 +71,80 @@ income_table <- diversity_data |>
 select(Income, Democratic, Republican)
 knitr::kable(income_table)
 ```
-This cross-tab proportion table examines how income levels differ by party, in an attempt to see if there is a connection between the two. It does so by showing the proportion of each party within each income group. The table shows that both the high and low median income individuals have a relatively balanced distribution between Democrats and Republicans. Interestingly, the proportion of democrats is higher than republicans in both the high and low income groups. However, the medium median income group shows a larger disparity, with most being Republican. Knowing this, I plan to examine if both income and party influence whether or not diversity is talked about in their statements. 
+```{r}
+party_income <- income_table |>
+  pivot_longer(cols = c("Democratic", "Republican"), names_to = "Party", values_to = "Proportion")
+
+ggplot(race_party_income, aes(x = Income, y = Proportion, fill = Party)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = "Proportion of Democratic and Republican Voters by Income",
+    x = "Income Group",
+    y = "Proportion"
+  ) +
+  scale_fill_manual(values = c("Democratic" = "blue", "Republican" = "red")) +
+  theme_minimal()
+```
+
+
+This cross-tab proportion table, and accompanying graph, examines how income levels differ by party, in an attempt to see if there is a connection between the two. It does so by showing the proportion of each party within each income group. Both table and graph show that both the high and low median income individuals have a relatively balanced distribution between Democrats and Republicans. However, the proportion of democrats is higher than republicans in both income categories, with the difference being slightly higher in the high income group. However, the medium median income group shows the largest disparity, with most being Republican. Knowing this, I plan to examine if both income and party influence whether or not diversity is talked about in their statements. 
+
+The implied connection between income group and party, wherein districts with higher median incomes are predominately democratic, districts with lower median incomes are predominately democratic, and districts with medium median incomes are predominately republican, is not entirely aligned with my hypothesis. I hypothesized that a higher median income would be associated with Republican districts, but that is more true for medium income / middle-class districts. However, my assumed grouping of low median income groups with democratic areas is plausible based on this analysis. 
+
+
+```{r}
+diversity_data |>
+  drop_na(majority_vote, white_share_category) |>
+  count(majority_vote, white_share_category) |>
+ggplot(mapping = aes(x = white_share_category, y = n, fill = majority_vote)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Correlation between Party and Race",
+       x = "Predominant Race of District Residents",
+       y = "Frequency",
+       fill = "Party Affiliation") +
+  scale_fill_manual(values = c("democratic" = "blue", "republican" = "red"),
+                    name = "Party Affiliation",
+                    labels = c("democratic" = "Democratic", "republican" = "Republican")) +
+  scale_x_discrete(labels = c("low_share" = "Predominately Non-White Population", "high_share" = "Predominately White Population")) +
+  theme_minimal()
+```
+This graph investigates if there is a connection between party affiliation and race within a given school district. There is a significant difference in the number of democratic and republican areas when the population is predominately non-white: there are more democratic areas that are predominately non-white, than there are republican areas. In comparison, there are far more republican areas when the population is predominately white, and the difference is even more pronounced. Notably, there are less overall values in the predominately white population category, which could suggest an imbalance in the data. 
+
+The implied connection between race and party, wherein districts with a higher proportion of white residents tend to be republican, and districts with a lower proportion of white residents tend to be democratic, aligns with my hypothesis which grouped these two variables together.  
+
+
+```{r}
+combined_table <- diversity_data %>%
+  mutate(
+    Income = case_when(
+      hh_median_income_category %in% c("low_median_income") ~ "Low Median Income",
+      hh_median_income_category %in% c("medium_median_income") ~ "Medium Median Income",
+      hh_median_income_category %in% c("high_median_income") ~ "High Median Income"
+    ),
+    Party = case_when(
+      majority_vote == "republican" ~ "Republican",
+      majority_vote == "democratic" ~ "Democratic",
+      NA ~ "Other"
+    )
+  ) %>%
+  group_by(white_share_category, Party, Income) %>%
+  summarize(prop = n() / nrow(.))
+
+filtered_data <- combined_table %>%
+  filter(Party %in% c("Democratic", "Republican"))
+
+ggplot(filtered_data, aes(x = Income, y = prop, fill = Party)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black", width = 0.7) +
+  labs(
+    title = "Proportions of Democratic and Republican Voters by Income and Race",
+    x = "Income Category",
+    y = "Proportion"
+  ) +
+  scale_fill_manual(values = c("Democratic" = "blue", "Republican" = "red")) +
+  facet_grid(white_share_category ~ ., scales = "free_y", space = "free_y", switch = "y", labeller = labeller(white_share_category = c("low_share" = "Predominately Non-White Population", "high_share" = "Predominately White Population"))) +
+  theme_minimal() +
+  theme(strip.text = element_text(size = 8))
+```
+ 
+ 
+ when you are rich but black, mostly democratic. when rich but white, mostly republican. when you are poor but black, mostly democratic. when you are poor but white, mostly republican. when you are medium income but black, mostly democratic. when medium income but white, mostly republican. 
