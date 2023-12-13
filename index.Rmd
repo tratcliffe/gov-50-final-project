@@ -27,7 +27,6 @@ diversity_data <- read.csv("data/district_tabular_data.csv")
 ```{r, echo=FALSE}
 diversity_data <- diversity_data |>
   select(topic_diversity_equity_and_inclusion, majority_vote, white_share_category, hh_median_income_category)
-diversity_data
 ```
 
 ```{r, echo=FALSE}
@@ -44,7 +43,7 @@ ggplot(div_count, aes(x = majority_vote, y = n)) +
     y = "Number of Mentions"
   ) +
   scale_x_discrete(labels = c("democratic" = "Democratic", "republican" = "Republican")) +
-  theme_minimal()
+  theme_minimal() 
 ```
 
 This graph shows a comparison of democratic and republican inclusions of diversity, equity or inclusion topics within their mission statements. It is the beginning of an exploration between party affiliation and an educational focus on these topics, and suggests that being democratic increases a school district's tendency to include them. 
@@ -71,7 +70,7 @@ income_table <- diversity_data |>
 select(Income, Democratic, Republican)
 knitr::kable(income_table)
 ```
-```{r}
+```{r, echo=FALSE}
 party_income <- income_table |>
   pivot_longer(cols = c("Democratic", "Republican"), names_to = "Party", values_to = "Proportion")
 
@@ -92,7 +91,7 @@ This cross-tab proportion table, and accompanying graph, examines how income lev
 The implied connection between income group and party, wherein districts with higher median incomes are predominately democratic, districts with lower median incomes are predominately democratic, and districts with medium median incomes are predominately republican, is not entirely aligned with my hypothesis. I hypothesized that a higher median income would be associated with Republican districts, but that is more true for medium income / middle-class districts. However, my assumed grouping of low median income groups with democratic areas is plausible based on this analysis. 
 
 
-```{r}
+```{r, echo=FALSE}
 diversity_data |>
   drop_na(majority_vote, white_share_category) |>
   count(majority_vote, white_share_category) |>
@@ -113,7 +112,7 @@ This graph investigates if there is a connection between party affiliation and r
 The implied connection between race and party, wherein districts with a higher proportion of white residents tend to be republican, and districts with a lower proportion of white residents tend to be democratic, aligns with my hypothesis which grouped these two variables together.  
 
 
-```{r}
+```{r, echo=FALSE}
 combined_table <- diversity_data %>%
   mutate(
     Income = case_when(
