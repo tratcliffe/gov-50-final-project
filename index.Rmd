@@ -16,7 +16,7 @@ As seen through the Affirmative Action case this year, conservative ideology ten
 
 ## Data
 
-My representative sample is comprised of 1314 mission statements from regular public school districts, whose mission statements were published online as of November 2022. The schools were chosen from a comprehensive list maintained by the National Center for Education Statistics. My unit of analysis is a Mission Statement. The explanatory variable of interest is whether values of diversity, equity or inclusion are included. The variable is coded = 1 for included, and = 0 for excluded. There are several key words that will indicate these values (closing gap, culture, diversity, equity, inclusion, nationality, race). My main outcome variable is the party of the district - Republican or Democrat. This is reflected through whether the majority of residents voted for Donald Trump or Joe Biden in the 2020 presidential election, and is calculated using 2020 General Election Results Disaggregated to 2020 Census Blocks Datasets available through the Redistricting Data Hub. Population data includes median income and share of white residents, and was accessed from the 2015-2019 American Community Survey estimates published by the Census Bureau. 
+My representative sample is comprised of 1314 mission statements from regular public school districts, whose mission statements were published online as of November 2022. The schools were chosen from a comprehensive list maintained by the National Center for Education Statistics. My unit of analysis is a Mission Statement. The explanatory variable of interest is whether values of diversity, equity or inclusion are included. The variable is coded = 1 for included, and = 0 for excluded. There are several key words that will indicate these values (closing gap, culture, diversity, equity, inclusion, nationality, race). My main outcome variable is the party of the district - Republican or Democrat. This is reflected through whether the majority of residents voted for Donald Trump or Joe Biden in the 2020 presidential election, and is calculated using 2020 General Election Results Disaggregated to 2020 Census Blocks Datasets available through the Redistricting Data Hub. Population data includes median income and share of white residents, and was accessed from the 2015-2019 American Community Survey estimates published by the Census Bureau. My research design is cross-sectional, as a single representative sample was collected from one time point.  
 
 If I observe less inclusion of diversity, inclusion and equity values in Mission Statements within Republican, upper-class and predominately white districts, this would provide support for my hypothesis. On the other hand, if I observe less inclusion of diversity, inclusion and equity values in Mission Statements within Democratic, lower-class and predominately non-white school districts, this would provide evidence against my hypothesis. 
 
@@ -50,9 +50,12 @@ ggplot(diversity_data, aes(x = topic_diversity_equity_and_inclusion)) +
     x = "DEI Topic Inclusion",
     y = "Count",
   ) +
-  theme(axis.text.x = element_blank())
+  theme(axis.text.x = element_blank()) +
+  theme_minimal() 
 ```
 As seen, there were 708 mission statements which did not include DEI topics, and 606 mission statements that did. 
+
+##Results
 
 ```{r, echo=FALSE}
 div_count <- diversity_data |>
@@ -236,4 +239,7 @@ The estimate for hh_median_income_categorylow_median_income is -0.080. This mean
 The estimate for hh_median_income_categorymedium_median_income is -0.008. This means that when all other variables are held constant, the estimated change in the inclusion of DEI topics with a medium median income (compared to a high median income), is approximately -0.008. In other words, on average, medium income districts are 0.8% less likely to include DEI topics than high income districts, holding all other factors constant. (BAD FOR MY HYPOTHESIS - I THOUGHT HIGH INCOME WOULD BE LEAST LIKELY TO INCLUDE DEI BUT ITS MOST)
 
 
-For the intercept and all coefficients except for the hh_median_income_categorymedium_median_income, the p-value is below 0.05, which indicates that they are statistically significant. There is evidence to reject the null hypothesis that the intercept is zero; it is likely meaningful. My main coefficient of interest — **party affiliation** - is also statistically significant, and shows that the effect of having a Republican district is most likely meaningful and has an effect on the inclusion of DEI topics. The same can be concluded for having a low share of white residents (race) and for having a low median income; both are likely meaningful factors. However, the coefficient for the median income group is greater than 0.05, suggesting there is insufficient evidence to reject the null hypothesis that the effect of having a medium median income is zero; it is unclear whether being from a medium income district truly affects whether a school includes DEI topics. 
+For the intercept and all coefficients except for the hh_median_income_categorymedium_median_income, the p-value is below 0.05, which indicates that they are statistically significant. There is evidence to reject the null hypothesis that the intercept is zero; it is likely meaningful. My main coefficient of interest — **party affiliation** - is also statistically significant, and shows that the effect of having a Republican district is most likely meaningful and we can conclude it has a causal effect on the inclusion of DEI topics. The same can be concluded for having a low share of white residents (race) and for having a low median income; both are likely meaningful causal factors. However, the coefficient for the median income group is greater than 0.05, suggesting there is insufficient evidence to reject the null hypothesis that the effect of having a medium median income is zero; it is unclear whether being from a medium income district is a causal effect on whether a school includes DEI topics. 
+
+
+1 paragraph (i) summarizing results and assessing the extent to which you find support for your hypothesis; (ii) describing limitations of the analysis and threats to inference (missing data, confounding, etc), and stating how you could improve your analysis if you had more time/money. (2pts)
