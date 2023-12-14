@@ -7,14 +7,14 @@ output:
     self_contained: false
 ---
 
-## Project Proposal 
+## Introduction
 Is the inclusion of 'Diversity, Equity and Inclusion' within K-12 School District mission statements affected by party, race and income? In this study, I plan to examine the extent to which socioeconomic and partisan factors of a given school district in the US, influences whether or not values of diversity, equity and inclusion are included in their mission statements. 
 
-I hypothesize that there will not only be a correlation between party and race/income, but that Republican districts with higher proportions of white, upper-class students, will be less likely to include Diversity, Equity and Inclusion within their mission statements. 
+I hypothesize that there will not only be a correlation between party and race/income, but that Republican districts, particularly those with higher proportions of white, upper-class students, will be less likely to include Diversity, Equity and Inclusion within their mission statements. 
 
 As seen through the Affirmative Action case this year, conservative ideology tends to value race-blind and, more generally, identity-blind policies and values. Policies (with a school Mission statement replicating the effect of a legal imposition) which attempt to fundamentally interfere with objective principles which equally apply to all, are usually rejected by Republicans, as well as privileged racial and economic groups. 
 
-My representative sample is comprised of 1314 mission statements from regular public school districts, whose mission statements were published online as of November 2022. The schools were chosen from a comprehensive list maintained by the National Center for Education Statistics. My unit of analysis is a Mission Statement. The explanatory variable of interest is whether values of diversity, equity or inclusion are included. The variable is coded = 1 for included, and = 0 for excluded. There are several key words that will indicate these values (closing gap, culture, diversity, equity, inclusion, nationality, race). My outcome variables are the party of the district - Republican or Democrat. This is reflected through whether the majority of residents voted for Donald Trump or Joe Biden in the 2020 presidential election, and is calculated using 2020 General Election Results Disaggregated to 2020 Census Blocks Datasets available through the Redistricting Data Hub. Population data includes median income and share of white residents, and was accessed from the 2015-2019 American Community Survey estimates published by the Census Bureau. 
+My representative sample is comprised of 1314 mission statements from regular public school districts, whose mission statements were published online as of November 2022. The schools were chosen from a comprehensive list maintained by the National Center for Education Statistics. My unit of analysis is a Mission Statement. The explanatory variable of interest is whether values of diversity, equity or inclusion are included. The variable is coded = 1 for included, and = 0 for excluded. There are several key words that will indicate these values (closing gap, culture, diversity, equity, inclusion, nationality, race). My main outcome variable is the party of the district - Republican or Democrat. This is reflected through whether the majority of residents voted for Donald Trump or Joe Biden in the 2020 presidential election, and is calculated using 2020 General Election Results Disaggregated to 2020 Census Blocks Datasets available through the Redistricting Data Hub. Population data includes median income and share of white residents, and was accessed from the 2015-2019 American Community Survey estimates published by the Census Bureau. 
 
 If I observe less inclusion of diversity, inclusion and equity values in Mission Statements within Republican, upper-class and predominately white districts, this would provide support for my hypothesis. On the other hand, if I observe less inclusion of diversity, inclusion and equity values in Mission Statements within Democratic, lower-class and predominately non-white school districts, this would provide evidence against my hypothesis. 
 
@@ -28,6 +28,8 @@ diversity_data <- read.csv("data/district_tabular_data.csv")
 diversity_data <- diversity_data |>
   select(topic_diversity_equity_and_inclusion, majority_vote, white_share_category, hh_median_income_category)
 ```
+
+## Data 
 
 ```{r, echo=FALSE}
 div_count <- diversity_data |>
@@ -46,7 +48,9 @@ ggplot(div_count, aes(x = majority_vote, y = n)) +
   theme_minimal() 
 ```
 
-This graph shows a comparison of democratic and republican inclusions of diversity, equity or inclusion topics within their mission statements. It is the beginning of an exploration between party affiliation and an educational focus on these topics, and suggests that being democratic increases a school district's tendency to include them. 
+This graph shows a comparison of democratic and republican inclusions of diversity, equity or inclusion topics within their mission statements. It is the beginning of an exploration between party affiliation and an educational focus on these topics, and suggests that being democratic increases a school district's tendency to include them. **Note if cross-sectional
+
+## Results
 
 ```{r, echo=FALSE}
 income_table <- diversity_data |>
@@ -178,5 +182,35 @@ knitr::kable(count_by_group, col.names = c("Income Group", "Predominate Race", "
              caption = "**Summary of DEI Topics Mentions by Income Group, Predominate Race, and Party**")
 ```
 These findings organize the unique socioeconomic/partisan groups from most inclusions of DEI topics, to least. It reveals that the group with the most DEI topic mentions was mostly white, democratic, medium income districts, closely followed by mostly white, high income, democratic districts. The least likely to include DEI topics in their mission statements were low income and medium income, mostly non-white, democratic districts. Interestingly, all republican districts fell in the middle of the distribution, regardless of race breakdown. 
+
+To further investigate whether party is the main variable of interest, accounting for race and income, a regression is useful. 
+
+```{r}
+library(gt)
+party_reg <- lm(topic_diversity_equity_and_inclusion ~ majority_vote + white_share_category + hh_median_income_category, data = diversity_data)
+tidy_regression <- tidy(party_reg)
+
+tidy_regression |>
+  gt() |>
+  tab_header(
+    title = "Regression Results",
+    subtitle = "Predicting Inclusion of DEI Topics"
+  ) |>
+  fmt_number(
+    columns = vars(estimate, std.error, statistic, p.value),
+    decimals = 3
+  )
+```
+This regression has an intercept of 0.495. This means that when all other variables (party, race, and income) are at their reference levels, which would represent mostly white residents, a high median income, and a Democratic district, the estimated value of the inclusion of DEI topics is approximately 0.495. This value is closer to 0 (not including) than 1 (including), suggesting that, on average, areas with predominantly white residents, high median income, and a Democratic majority are less likely to include Diversity, Equity, and Inclusion (DEI) topics in their mission statements compared to the overall average. 
+
+The estimate for majority_voterepublican is -0.236. This means that when all other variables are held constant, the estimated change in the inclusion of DEI topics with a Republican, rather than Democratic, majority is -0.2359. In other words, on average, areas with a Republican majority are 23.59% less likely to include DEI topics compared to a district with a Democratic majority, holding all other factors constant. (GOOD FOR MY HYPOTHESIS)
+
+The estimate for white_share_categorylow_share is 0.166. This means that when all other variables are held constant, the estimated change in the inclusion of DEI topics with a low share of white residents rather than a high share, is approximately 0.1664. In other words, on average, areas with mostly non-white residents are 16.64% more likely to include DEI topics compared to a district with mostly white residents, holding all other factors constant. (GOOD FOR MY HYPOTHESIS)
+
+
+The estimate for hh_median_income_categorylow_median_income is -0.080. This means that when all other variables are held constant, the estimated change in the inclusion of DEI topics with a low median income (compared to a high median income), is approximately -0.080. In other words, on average, low income districts are 8% less likely to include DEI topics than high income districts, holding all other factors constant. (BAD FOR MY HYPOTHESIS - I THOUGHT LOW INCOME WOULD BE MORE LIKELY THAN HIGH)
+
+The estimate for hh_median_income_categorymedium_median_income is -0.008. This means that when all other variables are held constant, the estimated change in the inclusion of DEI topics with a medium median income (compared to a high median income), is approximately -0.008. In other words, on average, medium income districts are 0.8% less likely to include DEI topics than high income districts, holding all other factors constant. (BAD FOR MY HYPOTHESIS - I THOUGHT HIGH INCOME WOULD BE LEAST LIKELY TO INCLUDE DEI BUT ITS MOST)
+
 
 
